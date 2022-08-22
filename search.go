@@ -92,7 +92,7 @@ type SearchClient[T any] struct {
 
 // Search : search without grouping and allows for pagination
 func (s *SearchClient[T]) Search(search *SearchParameters) (SearchResult[T], error) {
-
+	return SearchResult[T]{}, nil
 }
 
 // SearchGrouped : search with grouping by field and allows for pagniantion
