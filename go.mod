@@ -7,6 +7,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/lithammer/shortuuid/v4 v4.0.0
+	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.9.2
 	github.com/tkrajina/go-reflector v0.5.6
 	github.com/wlredeye/jsonlines v0.0.0-20160904163743-36b5e1bd13d0
