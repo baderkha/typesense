@@ -11,65 +11,6 @@ const (
 	typesenseErrPrefix = "TypeSenseClient : Bad Response : With Code"
 )
 
-const (
-	// TagSort : attach this to your struct field tsense_sort
-	//
-	// Example :
-	//           // your model
-	//			 type Model struct {
-	//				Field string `tsense_sort:"1"` // this will tell typesense you want this field sorted
-	//			 }
-	//
-	TagSort = "tsense_sort"
-	// TagIndex : attach this to your struct field tsense_index
-	//
-	// Example :
-	//           // your model
-	//			 type Model struct {
-	//				Field string `tsense_index:"1"` // this will tell typesense you want this field indexed
-	//			 }
-	//
-	TagIndex = "tsense_index"
-	// TagRequired : attach this to your struct field tsense_required
-	//
-	// Example :
-	//           // your model
-	//			 type Model struct {
-	//				Field string `tsense_required:"1"` // this will tell typesense you want this field to be required during creates
-	//			 }
-	//
-	TagRequired = "tsense_required"
-	// TagRequired : attach this to your struct field tsense_facet
-	//
-	// Example :
-	//           // your model
-	//			 type Model struct {
-	//				Field string `tsense_facet:"1"` // this will tell typesense you want this field as a facet
-	//			 }
-	//
-	TagFacet = "tsense_facet"
-	// TagTypeOverride : attach this to your struct field tsense_type
-	//
-	// Example :
-	//           // your model
-	//			type Model struct {
-	//				Field int8 `tsense_type:"int32"` // this will tell typesense you want
-	//												 // this field to override the type instead of the auto type (int64)
-	//			}
-	//
-	TagTypeOverride = "tsense_type"
-	// TagTypeOverride : attach this to your struct field tsense_default_sort
-	//
-	// Example :
-	//           // your model
-	//			type Model struct {
-	//				Field string `tsense_default_sort:"1"` // this will tell typesense you want
-	//												   // this field to be the default sort field
-	//			}
-	//
-	TagDefaultSort = "tsense_default_sort"
-)
-
 var (
 	fs = afero.NewOsFs()
 
