@@ -222,6 +222,14 @@ func NewDocumentClient[T any](apiKey string, host string, logging bool) IDocumen
 	}
 }
 
+// NewSearchClient : create a new search client which allows you to do advanced search
+func NewSearchClient[T any](apiKey string, host string, logging bool) ISearchClient[T] {
+	base := newBaseClient[T](apiKey, host, logging)
+	return &SearchClient[T]{
+		baseClient: base,
+	}
+}
+
 // NewManualMigration : Migration if you want to do your own thing and use the low level wrapper methods for the rest calls
 //
 // Disclaimer :

@@ -22,29 +22,29 @@ func SetSearchCacheTTL(searchCacheTTL int) {
 
 // SearchParameters : Search parameters for the serarcvh client
 type SearchParameters struct {
-	SearchTerm string `json:"q"`
-	QueryBy    string `json:"query_by"`
-	FilterBy   string `json:"filter_by"`
-	SortBy     string `json:"sort_by"`
-	Page       string `json:"page"`
-	PerPage    string `json:"per_page"`
+	SearchTerm string `json:"q,omitempty"`
+	QueryBy    string `json:"query_by,omitempty"`
+	FilterBy   string `json:"filter_by,omitempty"`
+	SortBy     string `json:"sort_by,omitempty"`
+	Page       string `json:"page,omitempty"`
+	PerPage    string `json:"per_page,omitempty"`
 }
 
 // SearchGroupedParameters : Search Parametes with grouping added
 type SearchGroupedParameters struct {
 	SearchParameters
-	GroupBy    string `json:"group_by"`
-	GroupLimit string `json:"group_limit"`
+	GroupBy    string `json:"group_by,omitempty"`
+	GroupLimit string `json:"group_limit,omitempty"`
 }
 
-func NewSearchParams() SearchParameters {
-	return (SearchParameters{SearchTerm: "*"})
+func NewSearchParams() *SearchParameters {
+	return (&SearchParameters{SearchTerm: "*"})
 }
 
-func NewSearchGroupedParams() SearchGroupedParameters {
+func NewSearchGroupedParams() *SearchGroupedParameters {
 	baseSearch := NewSearchParams()
 	baseSearch.AddSearchTerm("*")
-	return (SearchGroupedParameters{SearchParameters: baseSearch})
+	return (&SearchGroupedParameters{SearchParameters: *baseSearch})
 }
 func (s *SearchParameters) AddSearchTerm(q string) *SearchParameters {
 	s.SearchTerm = q
