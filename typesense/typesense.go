@@ -245,10 +245,32 @@ func NewManualMigration(apiKey string, host string, logging bool) IMigration[any
 	}
 }
 
+// NewClusterClient : client for cluster operations
 func NewClusterClient(apiKey string, host string, logging bool) IClusterClient {
 	base := newBaseClient[any](apiKey, host, logging)
 	return &ClusterClient{
 		baseClient: base,
+	}
+}
+
+// NewClient : default client , has all the other clients wrapped
+func NewClient[T any](apiKey string, host string, logging bool) IClient[T] {
+	return &Client[T]{
+		migration: NewModelMigration[T](apiKey, host, logging),
+		doc:       NewDocumentClient[T](apiKey, host, logging),
+		search:    NewSearchClient[T](apiKey, host, logging),
+		cluster:   NewClusterClient(apiKey, host, logging),
+	}
+}
+
+// NewClientNoGeneric : default client , has all the other clients wrapped . This will not have any generic bindings
+//						usage is limited
+func NewClientNoGeneric(apiKey string, host string, logging bool) IClient[any] {
+	return &Client[any]{
+		migration: NewModelMigration[any](apiKey, host, logging),
+		doc:       NewDocumentClient[any](apiKey, host, logging),
+		search:    NewSearchClient[any](apiKey, host, logging),
+		cluster:   NewClusterClient(apiKey, host, logging),
 	}
 }
 
