@@ -144,3 +144,11 @@ func (m *baseClient[T]) golangToTypesenseType(field reflector.ObjField) (typ str
 		return "", fmt.Errorf("Typesense : Unsupported field type %s for %s field", goType, fieldName)
 	}
 }
+
+func newBaseClient[T any](apiKey string, host string, logging bool) *baseClient[T] {
+	return &baseClient[T]{
+		r:          newHTTPClient(apiKey, host, logging),
+		aliasCache: make(map[string]string),
+		mu:         sync.Mutex{},
+	}
+}

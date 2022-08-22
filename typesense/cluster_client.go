@@ -9,6 +9,14 @@ import (
 	http2 "github.com/baderkha/library/pkg/http"
 )
 
+// NewClusterClient : client for cluster operations
+func NewClusterClient(apiKey string, host string, logging bool) IClusterClient {
+	base := newBaseClient[any](apiKey, host, logging)
+	return &ClusterClient{
+		baseClient: base,
+	}
+}
+
 type ClusterOperationResponse struct {
 	Success bool `json:"success"`
 }

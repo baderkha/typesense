@@ -76,6 +76,22 @@ type IDocumentClient[T any] interface {
 	WithoutAutoAlias() IDocumentClient[T]
 }
 
+// NewDocumentClient : create a new document client which allows you to do basic crud operations on documents
+func NewDocumentClient[T any](apiKey string, host string, logging bool) IDocumentClient[T] {
+	base := newBaseClient[T](apiKey, host, logging)
+	return &DocumentClient[T]{
+		baseClient: base,
+	}
+}
+
+// NewSearchClient : create a new search client which allows you to do advanced search
+func NewSearchClient[T any](apiKey string, host string, logging bool) ISearchClient[T] {
+	base := newBaseClient[T](apiKey, host, logging)
+	return &SearchClient[T]{
+		baseClient: base,
+	}
+}
+
 // DocumentClient : Document client (meant for simple gets , post , patch , deletes
 type DocumentClient[T any] struct {
 	*baseClient[T]

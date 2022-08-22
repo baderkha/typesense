@@ -1,5 +1,26 @@
 package typesense
 
+// NewClient : default client , has all the other clients wrapped
+func NewClient[T any](apiKey string, host string, logging bool) IClient[T] {
+	return &Client[T]{
+		migration: NewModelMigration[T](apiKey, host, logging),
+		doc:       NewDocumentClient[T](apiKey, host, logging),
+		search:    NewSearchClient[T](apiKey, host, logging),
+		cluster:   NewClusterClient(apiKey, host, logging),
+	}
+}
+
+// NewClientNoGeneric : default client , has all the other clients wrapped . This will not have any generic bindings
+//						usage is limited
+func NewClientNoGeneric(apiKey string, host string, logging bool) IClient[any] {
+	return &Client[any]{
+		migration: NewModelMigration[any](apiKey, host, logging),
+		doc:       NewDocumentClient[any](apiKey, host, logging),
+		search:    NewSearchClient[any](apiKey, host, logging),
+		cluster:   NewClusterClient(apiKey, host, logging),
+	}
+}
+
 // IClient : General Client that contains all operations supported by typesense
 type IClient[T any] interface {
 	// Migration : returns back migration client

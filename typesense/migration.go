@@ -83,6 +83,30 @@ type IMigration[T any] interface {
 	VersionCollectionName(colName string) string
 }
 
+// NewManualMigration : Migration if you want to do your own thing and use the low level wrapper methods for the rest calls
+//
+// Disclaimer :
+// 				// Do not use Auto Method
+// 				migrator := typesense.NewManualMigration("","","")
+//				migrator.Auto() // should panic or error or give you a bad status code
+//
+//				// instead you will have to make the calls yourself
+func NewManualMigration(apiKey string, host string, logging bool) IMigration[any] {
+	base := newBaseClient[any](apiKey, host, logging)
+	return &Migration[any]{
+		baseClient: base,
+	}
+}
+
+// NewModelMigration : Migration if you want to use Model Dependent migration ie tie your migration client to a
+//A Specific struct declaration
+func NewModelMigration[T any](apiKey string, host string, logging bool) IMigration[T] {
+	base := newBaseClient[T](apiKey, host, logging)
+	return &Migration[T]{
+		baseClient: base,
+	}
+}
+
 // Migration : Migration Client for typesense
 //
 // Houses Both Collection / Alias Operations + Adds a handy AutoMigration function / ManualMigration
