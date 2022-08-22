@@ -1,6 +1,7 @@
 <h1 align="center">Typesense Generic Client GoLang [Unofficial]</h1>
 
-
+#### Author : Ahmad Baderkhan
+#### Version : Alpha
 
 This project is an implementation of the rest api proided by Typesense . 
 
