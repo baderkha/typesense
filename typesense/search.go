@@ -95,6 +95,14 @@ type ISearchClient[T any] interface {
 	WithoutAutoAlias() ISearchClient[T]
 }
 
+// NewSearchClient : create a new search client which allows you to do advanced search
+func NewSearchClient[T any](apiKey string, host string, logging bool) ISearchClient[T] {
+	base := newBaseClient[T](apiKey, host, logging)
+	return &SearchClient[T]{
+		baseClient: base,
+	}
+}
+
 // SearchClient : a client that allows you to do advanced
 //queries for a specified model
 type SearchClient[T any] struct {
