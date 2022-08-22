@@ -65,33 +65,22 @@ type IDocumentClient[T any] interface {
 	IndexMany(m []*T, action string) error
 	// ImportMany : import many documents with json lines
 	ImportMany(jsonLines []byte, action string) error
-	// WithDocBatchSize : Override The batch Size for a local operation and not globally
-	WithDocBatchSize(batchSize int64) IDocumentClient[T]
-	// WithDocDirtyStrat : Override the dirty document strategy for a local operation and not globally
-	WithDocDirtyStrat(dirtyStrat string) IDocumentClient[T]
+	// WithBatchSize : Override The batch Size for a local operation and not globally
+	WithBatchSize(batchSize int64) IDocumentClient[T]
+	// WithDirtyStrat : Override the dirty document strategy for a local operation and not globally
+	WithDirtyStrat(dirtyStrat string) IDocumentClient[T]
 	// WithCollectionName : Override the collection name for local operations and not globally
-	WithDocCollectionName(colName string) IDocumentClient[T]
-	// WithoutDocAutoAlias : if you used the migration tool , it probably auto aliased your collection . if you're doing your own migration
+	WithCollectionName(colName string) IDocumentClient[T]
+	// WithoutAutoAlias : if you used the migration tool , it probably auto aliased your collection . if you're doing your own migration
 	//                       then call this method to not call the alias route to resolve the doc
-	WithoutDocAutoAlias() IDocumentClient[T]
+	WithoutAutoAlias() IDocumentClient[T]
 }
 
 // DocumentClient : Document client (meant for simple gets , post , patch , deletes
 type DocumentClient[T any] struct {
 	*baseClient[T]
-	colName      string
-	batchSize    int64
-	dirtyStrat   string
-	isNotAliased bool
-}
-
-func (d *DocumentClient[T]) getColName() string {
-	colName := conditional.Ternary(d.colName != "", d.colName, d.getCollectionName())
-	if !d.isNotAliased {
-		_, al := d.GetAliasCached(colName)
-		colName = al.CollectionName
-	}
-	return colName
+	batchSize  int64
+	dirtyStrat string
 }
 
 func (d *DocumentClient[T]) getBatchSize() string {
@@ -104,7 +93,7 @@ func (d *DocumentClient[T]) getDirtyStrat() string {
 
 func (d *DocumentClient[T]) docRoute(subRoute string) string {
 	subRoute = conditional.Ternary(subRoute == "", "", "/"+subRoute)
-	return fmt.Sprintf("/collections/%s/documents%s", d.getColName(), subRoute)
+	return fmt.Sprintf("/collections/%s/documents%s", d.resolveColName(), subRoute)
 }
 
 // IsExistById : check if document exists
@@ -230,27 +219,27 @@ func (d *DocumentClient[T]) ImportMany(jsonLines []byte, action string) error {
 
 	return nil
 }
-func (d *DocumentClient[T]) WithDocBatchSize(batchSize int64) IDocumentClient[T] {
+func (d *DocumentClient[T]) WithBatchSize(batchSize int64) IDocumentClient[T] {
 	var newDoc DocumentClient[T]
 	newDoc = *d
 	newDoc.batchSize = batchSize
 	return &newDoc
 }
-func (d *DocumentClient[T]) WithDocDirtyStrat(dirtyStrat string) IDocumentClient[T] {
+func (d *DocumentClient[T]) WithDirtyStrat(dirtyStrat string) IDocumentClient[T] {
 	var newDoc DocumentClient[T]
 	newDoc = *d
 	newDoc.dirtyStrat = dirtyStrat
 	return &newDoc
 }
 
-func (d *DocumentClient[T]) WithDocCollectionName(colName string) IDocumentClient[T] {
+func (d *DocumentClient[T]) WithCollectionName(colName string) IDocumentClient[T] {
 	var newDoc DocumentClient[T]
 	newDoc = *d
 	newDoc.colName = colName
 	return &newDoc
 }
 
-func (d *DocumentClient[T]) WithoutDocAutoAlias() IDocumentClient[T] {
+func (d *DocumentClient[T]) WithoutAutoAlias() IDocumentClient[T] {
 	var newDoc DocumentClient[T]
 	newDoc = *d
 	newDoc.isNotAliased = true

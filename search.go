@@ -1,5 +1,10 @@
 package typesense
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 var (
 	hasSearchCache        bool = true
 	searchCacheTTLSeconds int  = 60
@@ -21,14 +26,15 @@ type SearchParameters struct {
 	QueryBy    string `json:"query_by"`
 	FilterBy   string `json:"filter_by"`
 	SortBy     string `json:"sort_by"`
-	Page       int    `json:"page"`
-	PerPage    int    `json:"per_page"`
+	Page       string `json:"page"`
+	PerPage    string `json:"per_page"`
 }
 
+// SearchGroupedParameters : Search Parametes with grouping added
 type SearchGroupedParameters struct {
 	SearchParameters
 	GroupBy    string `json:"group_by"`
-	GroupLimit int    `json:"group_limit"`
+	GroupLimit string `json:"group_limit"`
 }
 
 func NewSearchParams() SearchParameters {
@@ -49,11 +55,11 @@ func (s *SearchParameters) AddQueryBy(fieldQueryBy string) *SearchParameters {
 	return s
 }
 func (s *SearchParameters) AddPage(page int) *SearchParameters {
-	s.Page = page
+	s.Page = fmt.Sprintf("%d", page)
 	return s
 }
 func (s *SearchParameters) AddPerPage(perPage int) *SearchParameters {
-	s.PerPage = perPage
+	s.PerPage = fmt.Sprintf("%d", perPage)
 	return s
 }
 func (s *SearchParameters) AddFilterBy(fieldFilterBy string) *SearchParameters {
@@ -72,7 +78,7 @@ func (s *SearchGroupedParameters) AddGroupBy(GroupBy string) *SearchGroupedParam
 }
 
 func (s *SearchGroupedParameters) AddGroupLimit(GroupLimit int) *SearchGroupedParameters {
-	s.GroupLimit = GroupLimit
+	s.GroupLimit = fmt.Sprintf("%d", GroupLimit)
 	return s
 }
 
@@ -82,6 +88,11 @@ type ISearchClient[T any] interface {
 	Search(s *SearchParameters) (SearchResult[T], error)
 	// SearchGrouped : search with grouping by field and allows for pagniantion
 	SearchGrouped(s *SearchGroupedParameters) (SearchResultGrouped[T], error)
+	// WithCollectionName : Override the collection name for local operations and not globally
+	WithCollectionName(colName string) ISearchClient[T]
+	// WithoutDocAutoAlias : if you used the migration tool , it probably auto aliased your collection . if you're doing your own migration
+	//                       then call this method to not call the alias route to resolve the doc
+	WithoutAutoAlias() ISearchClient[T]
 }
 
 // SearchClient : a client that allows you to do advanced
@@ -90,12 +101,45 @@ type SearchClient[T any] struct {
 	*baseClient[T]
 }
 
+func (s *SearchClient[T]) searchRestAny(queryParams any, castValue interface{}) error {
+	b, _ := json.Marshal(queryParams)
+	var params map[string]string
+	_ = json.Unmarshal(b, &params)
+	s.Req().
+		SetQueryParams(params).
+		SetResult(castValue).
+		Get(fmt.Sprintf("/collections/%s/documents/search", s.resolveColName()))
+	return nil
+
+}
+
 // Search : search without grouping and allows for pagination
 func (s *SearchClient[T]) Search(search *SearchParameters) (SearchResult[T], error) {
-	return SearchResult[T]{}, nil
+	var res SearchResult[T]
+	err := s.searchRestAny(search, &res)
+	return res, err
 }
 
 // SearchGrouped : search with grouping by field and allows for pagniantion
 func (s *SearchClient[T]) SearchGrouped(search *SearchGroupedParameters) (SearchResultGrouped[T], error) {
+	var res SearchResultGrouped[T]
+	err := s.searchRestAny(search, &res)
+	return res, err
+}
 
+// WithCollectionName : Override the collection name for local operations and not globally
+func (s *SearchClient[T]) WithCollectionName(colName string) ISearchClient[T] {
+	var newSearch SearchClient[T]
+	newSearch = *s
+	newSearch.colName = colName
+	return &newSearch
+}
+
+// WithoutDocAutoAlias : if you used the migration tool , it probably auto aliased your collection . if you're doing your own migration
+//                       then call this method to not call the alias route to resolve the doc
+func (s *SearchClient[T]) WithoutAutoAlias() ISearchClient[T] {
+	var newSearch SearchClient[T]
+	newSearch = *s
+	newSearch.isNotAliased = true
+	return &newSearch
 }

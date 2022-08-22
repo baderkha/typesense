@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/baderkha/library/pkg/conditional"
 	"github.com/baderkha/library/pkg/reflection"
 	"github.com/baderkha/library/pkg/stringutil"
 	"github.com/go-resty/resty/v2"
@@ -17,9 +18,11 @@ import (
 )
 
 type baseClient[T any] struct {
-	r          *resty.Client
-	aliasCache map[string]string
-	mu         sync.Mutex
+	r            *resty.Client
+	aliasCache   map[string]string
+	mu           sync.Mutex
+	isNotAliased bool
+	colName      string
 }
 
 // getCollectionName : gets an underscore name from the struct field
@@ -40,6 +43,15 @@ func (m *baseClient[T]) VersionCollectionName(colName string) string {
 	golangDateTime := time.Now().Format("2006-01-02")
 	hash := shortuuid.New()
 	return fmt.Sprintf("%s_%s_%s", colName, golangDateTime, hash)
+}
+
+func (d *baseClient[T]) resolveColName() string {
+	colName := conditional.Ternary(d.colName != "", d.colName, d.getCollectionName())
+	if !d.isNotAliased {
+		_, al := d.GetAliasCached(colName)
+		colName = al.CollectionName
+	}
+	return colName
 }
 
 // GetCollectionFromAlias : get underlying collection for an alias name if the binding exists
