@@ -245,6 +245,13 @@ func NewManualMigration(apiKey string, host string, logging bool) IMigration[any
 	}
 }
 
+func NewClusterClient(apiKey string, host string, logging bool) IClusterClient {
+	base := newBaseClient[any](apiKey, host, logging)
+	return &ClusterClient{
+		baseClient: base,
+	}
+}
+
 func newBaseClient[T any](apiKey string, host string, logging bool) *baseClient[T] {
 	return &baseClient[T]{
 		r:          newHTTPClient(apiKey, host, logging),
