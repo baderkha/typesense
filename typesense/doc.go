@@ -8,7 +8,7 @@
 //
 // - Search Client    => Allows advanced search
 //
-// - Document Client  => Allows indexing (inserting / del / update) Documents
+// - Document Client  => Allows indexing (inserting / del / update) Documents + simple gets by id export ..etc
 //
 // - Cluster Client   => Manages cluster / gets health and other metrics
 //

@@ -6,6 +6,8 @@ import (
 
 	"github.com/baderkha/library/pkg/conditional"
 	http2 "github.com/baderkha/library/pkg/http"
+	"github.com/pkg/errors"
+	"github.com/spf13/afero"
 )
 
 const (
@@ -65,6 +67,36 @@ type IDocumentClient[T any] interface {
 	IndexMany(m []*T, action string) error
 	// ImportMany : import many documents with json lines
 	ImportMany(jsonLines []byte, action string) error
+	// ImportManyFromFile : opens a file from path and sends it to your typesense backend
+	//
+	// This gives you the operatunity to specifc the file system to be used
+	// By default this package uses the os file system , but since this client is built
+	// with the afero package (see https://github.com/spf13/afero) your file system options are limitless
+	//
+	// Example :
+	//				// your model
+	// 				type User struct {
+	//					FirstName string `json:"first_name" tsense_sort:"1" tsense_required:"1"`
+	//				}
+	//				func main() {
+	//					filePath := "/tmp/some_file.jsonl"
+	//					memoryFS := afero.NewMemMapFs()
+	//
+	//					// memory file system instead of the os
+	//					// (there's a bunch of implementations you can check out)
+	//					typesense.OverrideFS(memoryFS)
+	//
+	//					docClient := typesense.NewDocumentClient[User]("api key" , "host" , false)
+	//					err := docClient.ImportManyFromFile(
+	//							filePath,
+	//							typesense.DocumentActionUpsert,
+	//						)
+	//					if err != nil {
+	//						log.Fatal(err)
+	//					}
+	//				}
+	//
+	ImportManyFromFile(path string, action string) error
 	// WithBatchSize : Override The batch Size for a local operation and not globally
 	WithBatchSize(batchSize int64) IDocumentClient[T]
 	// WithDirtyStrat : Override the dirty document strategy for a local operation and not globally
@@ -80,14 +112,6 @@ type IDocumentClient[T any] interface {
 func NewDocumentClient[T any](apiKey string, host string, logging bool) IDocumentClient[T] {
 	base := newBaseClient[T](apiKey, host, logging)
 	return &DocumentClient[T]{
-		baseClient: base,
-	}
-}
-
-// NewSearchClient : create a new search client which allows you to do advanced search
-func NewSearchClient[T any](apiKey string, host string, logging bool) ISearchClient[T] {
-	base := newBaseClient[T](apiKey, host, logging)
-	return &SearchClient[T]{
 		baseClient: base,
 	}
 }
@@ -216,6 +240,14 @@ func (d *DocumentClient[T]) DeleteManyWithQuery(query string) error {
 }
 func (d *DocumentClient[T]) IndexMany(m []*T, action string) error {
 	return d.ImportMany(d.ModelToJSONLines(m), action)
+}
+
+func (d *DocumentClient[T]) ImportManyFromFile(path string, action string) error {
+	content, err := afero.ReadFile(fs, path)
+	if err != nil {
+		errors.Wrap(err, typesenseErrPrefix)
+	}
+	return d.ImportMany(content, action)
 }
 func (d *DocumentClient[T]) ImportMany(jsonLines []byte, action string) error {
 	res, err := d.
