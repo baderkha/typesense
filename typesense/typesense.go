@@ -73,7 +73,14 @@ const (
 
 var (
 	fs = afero.NewOsFs()
+
+	httpRetryCount = 1
 )
+
+// SetHTTPRetryCount : sets the retry count for the requests
+func SetHTTPRetryCount(retryCount int) {
+	httpRetryCount = retryCount
+}
 
 // OverrideFS : change the file ssytem that will be used in the client
 //
@@ -194,6 +201,7 @@ func newHTTPClient(apiKey, host string, logging bool) *resty.Client {
 			"X-TYPESENSE-API-KEY": apiKey,
 		}).
 		SetBaseURL(host).
+		SetRetryCount(httpRetryCount).
 		SetDebug(logging)
 }
 
