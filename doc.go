@@ -30,7 +30,7 @@
 //
 // https://github.com/baderkha
 //
-// https://github.com/baderkha/library/blob/main/pkg/store/client/typesense
+// https://github.com/baderkha/typesense
 //
 // Author : Ahmad Baderkhan
 package typesense
