@@ -2,6 +2,7 @@ package typesense
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/afero"
@@ -100,10 +101,35 @@ type SearchResult[T any] struct {
 	Hits []Hit[T] `json:"hits"`
 }
 
+// GetDocuments : returns the documents
+func (s *SearchResult[T]) GetDocuments() []*T {
+	var modelRecords []*T
+	for _, record := range s.Hits {
+		modelRecords = append(modelRecords, &record.Document)
+	}
+	return modelRecords
+}
+
 // SearchResultGrouped : search result with grouping
 type SearchResultGrouped[T any] struct {
 	SearchResultBase
 	GroupedHits []GroupedHits[T] `json:"grouped_hits"`
+}
+
+// GetDocuments : returns the documents via group
+// example :
+//			 {"first_name,last_name" : [{first_name : "something" , "last_name" : "something_else"}]}
+func (s *SearchResultGrouped[T]) GetDocuments() map[string][]*T {
+	var modelRecordGroup map[string][]*T = make(map[string][]*T)
+	for _, group := range s.GroupedHits {
+		var modelRecords []*T
+		for _, record := range group.Hits {
+			modelRecords = append(modelRecords, &record.Document)
+		}
+
+		modelRecordGroup[strings.Join(group.GroupKey, ",")] = modelRecords
+	}
+	return modelRecordGroup
 }
 
 // Hits : results , houses your documents
