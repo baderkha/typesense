@@ -117,7 +117,7 @@ go get github.com/baderkha/typesense
   // neet right ?
   doc, err := client.Document().GetById("some-uuid-for-this")
   ```
-* Search For Document
+* Search For Documents
 
   ```go
 
