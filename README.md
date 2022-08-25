@@ -36,7 +36,9 @@ go get github.com/baderkha/typesense
 
 ### 2) Code Example With Basic Operations
 
-- Define a Type
+- For Full Example go to https://github.com/baderkha/typesense/blob/main/cmd/example/example.go
+
+* Define a Type
 
   ```go
 
@@ -61,7 +63,7 @@ go get github.com/baderkha/typesense
   }
   ```
 
-- Init Client
+* Init Client
 
   ```go
   apiKey := os.Getenv("TYPESENSE_API_KEY")
@@ -71,7 +73,7 @@ go get github.com/baderkha/typesense
   client := typesense.NewClient[UserData](apiKey, host, logging)
   ```
 
-- Migrate Model
+* Migrate Model
 
   ```go
   // this method will 2 resources
@@ -86,7 +88,7 @@ go get github.com/baderkha/typesense
 
   ```
 
-- Index A Document
+* Index A Document
 
   ```go
   // Document
@@ -107,7 +109,7 @@ go get github.com/baderkha/typesense
   )
   ```
 
-- Get Document
+* Get Document
   ```go
   // Document
   // this method will get the record we just created and return back
@@ -115,7 +117,7 @@ go get github.com/baderkha/typesense
   // neet right ?
   doc, err := client.Document().GetById("some-uuid-for-this")
   ```
-- Search For Document
+* Search For Document
 
   ```go
 
