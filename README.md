@@ -136,6 +136,10 @@ go get github.com/baderkha/typesense
   res, err := client.Search().Search(searchQuery)
   ```
 
+---
+
+## Author : Ahmad Baderkhan
+
 ## License
 
 MIT
