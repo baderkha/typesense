@@ -140,6 +140,4 @@ go get github.com/baderkha/typesense
 
 ## Author : Ahmad Baderkhan
 
-## License
-
-MIT
+## License : MIT
