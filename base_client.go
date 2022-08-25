@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/baderkha/library/pkg/conditional"
-	"github.com/baderkha/library/pkg/reflection"
-	"github.com/baderkha/library/pkg/stringutil"
+	"github.com/baderkha/typesense/pkg/conditional"
+	"github.com/baderkha/typesense/pkg/reflection"
+	"github.com/baderkha/typesense/pkg/stringutil"
 	"github.com/go-resty/resty/v2"
 	"github.com/lithammer/shortuuid/v4"
 	"github.com/tkrajina/go-reflector/reflector"

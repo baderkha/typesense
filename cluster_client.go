@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/baderkha/library/pkg/conditional"
-	"github.com/baderkha/library/pkg/http"
-	http2 "github.com/baderkha/library/pkg/http"
+	"github.com/baderkha/typesense/pkg/conditional"
+	"github.com/baderkha/typesense/pkg/http"
+	http2 "github.com/baderkha/typesense/pkg/http"
 )
 
 // NewClusterClient : client for cluster operations

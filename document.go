@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/baderkha/library/pkg/conditional"
-	http2 "github.com/baderkha/library/pkg/http"
+	"github.com/baderkha/typesense/pkg/conditional"
+	http2 "github.com/baderkha/typesense/pkg/http"
 	"github.com/pkg/errors"
 	"github.com/spf13/afero"
 )

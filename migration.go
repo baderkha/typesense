@@ -7,9 +7,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/baderkha/library/pkg/conditional"
-	http2 "github.com/baderkha/library/pkg/http"
-	"github.com/baderkha/library/pkg/store/entity"
+	"github.com/baderkha/typesense/pkg/conditional"
+	http2 "github.com/baderkha/typesense/pkg/http"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/tkrajina/go-reflector/reflector"
 )
@@ -295,7 +294,7 @@ func (m Migration[T]) ModelToCollection() (*Collection, error) {
 	var col Collection
 	var defaultSort string
 	col.Name = m.getCollectionName()
-	s := entity.Account{}
+	var s T
 
 	// Fields will list every structure exportable fields.
 	// Here, it's content would be equal to:
